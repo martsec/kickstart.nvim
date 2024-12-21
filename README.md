@@ -1,5 +1,15 @@
 # kickstart.nvim
 
+https://rsdlt.github.io/posts/rust-nvim-ide-guide-walkthrough-development-debug/#better-coding-experience
+
+https://www.youtube.com/watch?v=m8C0Cq9Uv9oo
+
+https://github.com/nvim-neo-tree/neo-tree.nvim
+
+https://github.com/nvim-pack/nvim-spectre
+
+
+
 ## Introduction
 
 A starting point for Neovim that is:
