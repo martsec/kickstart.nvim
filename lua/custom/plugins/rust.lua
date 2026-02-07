@@ -1,7 +1,22 @@
 return {
+  -- {
+  --   'cordx56/rustowl',
+  --   version = '*', -- Latest stable version
+  --   build = 'cargo install --path . --locked',
+  --   lazy = false, -- This plugin is already lazy
+  --   opts = {
+  --     client = {
+  --       on_attach = function(_, buffer)
+  --         vim.keymap.set('n', '<leader>o', function()
+  --           require('rustowl').toggle(buffer)
+  --         end, { buffer = buffer, desc = 'Toggle RustOwl' })
+  --       end,
+  --     },
+  --   },
+  -- },
   {
     'mrcjkb/rustaceanvim',
-    version = '^5', -- Recommended
+    version = '^6', -- Recommended
     ft = { 'rust' },
     lazy = false, -- This plugin is already lazy
     config = function()
@@ -9,6 +24,7 @@ return {
         -- Plugin configuration
         tools = {},
         -- LSP configuration
+        -- rustowl = {},
         server = {
           on_attach = function(client, bufnr)
             -- you can also put keymaps in here
@@ -16,12 +32,22 @@ return {
           default_settings = {
             -- rust-analyzer language server configuration
             ['rust-analyzer'] = {
+              cargo = {
+                allFeatures = true,
+                features = 'all',
+                loadOutDirsFromCheck = true,
+                buildScripts = {
+                  enable = true,
+                },
+              },
+              checkOnSave = true,
               procMacro = {
+                enable = true,
                 ignored = {
                   leptos_macro = {
                     -- optional: --
                     -- "component",
-                    'server',
+                    -- 'server',
                   },
                 },
               },
@@ -44,5 +70,21 @@ return {
     --     end, { silent = true, buffer = bufnr, desc = 'Override hover keymep with rustaceanvims hover action' })
     --   end,
     -- },
+    -- keys = {
+    --   {
+    --     '<c-o>',
+    --     function()
+    --       require('rustowl').rustowl_cursor()
+    --     end,
+    --     desc = 'RustOwl',
+    --   },
+    -- },
   },
+  -- {
+  --   'cordx56/rustowl',
+  --   version = '*', -- Latest stable version
+  --   build = 'cargo install --path . --locked',
+  --   lazy = false, -- This plugin is already lazy
+  --   opts = {},
+  -- },
 }
