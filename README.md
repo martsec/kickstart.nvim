@@ -1,5 +1,15 @@
 # kickstart.nvim
 
+https://rsdlt.github.io/posts/rust-nvim-ide-guide-walkthrough-development-debug/#better-coding-experience
+
+https://www.youtube.com/watch?v=m8C0Cq9Uv9oo
+
+https://github.com/nvim-neo-tree/neo-tree.nvim
+
+https://github.com/nvim-pack/nvim-spectre
+
+
+
 ## Introduction
 
 A starting point for Neovim that is:
@@ -219,7 +229,7 @@ sudo apt install make gcc ripgrep unzip git xclip neovim
 
 ```
 sudo apt update
-sudo apt install make gcc ripgrep unzip git xclip curl
+sudo apt install make gcc ripgrep unzip git xclip curl fd-find
 
 # Now we install nvim
 curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz
