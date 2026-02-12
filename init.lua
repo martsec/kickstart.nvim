@@ -104,7 +104,6 @@ vim.o.number = true
 --  Experiment for yourself to see if you like it!
 vim.opt.relativenumber = true
 
-
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.o.mouse = 'a'
 
@@ -221,8 +220,8 @@ vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' }
 
 vim.opt.foldmethod = 'expr'
 vim.opt.foldexpr = 'nvim_treesitter#foldexpr()'
-vim.opt.foldlevel = 2
-vim.opt.foldlevelstart = 2
+vim.opt.foldlevel = 99
+vim.opt.foldlevelstart = 3
 
 -- TIP: Disable arrow keys in normal mode
 -- vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
@@ -439,9 +438,7 @@ require('lazy').setup({
       vim.keymap.set({ 'n', 'v' }, '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
       vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
       vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
-      vim.keymap.set('n', '<leader>sD', function()
-        builtin.diagnostics { bufnr = 0 }
-      end, { desc = '[S]earch Buffer [D]iagnostics' })
+      vim.keymap.set('n', '<leader>sD', function() builtin.diagnostics { bufnr = 0 } end, { desc = '[S]earch Buffer [D]iagnostics' })
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
       vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
       vim.keymap.set('n', '<leader>sc', builtin.commands, { desc = '[S]earch [C]ommands' })
@@ -646,10 +643,6 @@ require('lazy').setup({
       --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
       --  See `:help lsp-config` for information about keys and how to configure
       local servers = {
-        markdown_oxide = {},
-        -- clangd = {},
-        -- gopls = {},
-        --
         ty = {},
         ruff = {},
         sqlfluff = {},
@@ -657,12 +650,6 @@ require('lazy').setup({
         tfsec = {},
         -- rust_analyzer = {}, -- Commenting out since we have rustaceanvim
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
-        --
-        -- Some languages (like typescript) have entire language plugins that can be useful:
-        --    https://github.com/pmizio/typescript-tools.nvim
-        --
-        -- But for many setups, the LSP (`ts_ls`) will work just fine
-        -- ts_ls = {},
       }
 
       -- Ensure the servers and tools above are installed
@@ -674,9 +661,10 @@ require('lazy').setup({
       -- You can press `g?` for help in this menu.
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
-        'lua_ls', -- Lua Language server
+        'lua-language-server', -- Lua Language server
         'stylua', -- Used to format Lua code
         -- You can add other tools here that you want Mason to install
+        'markdown-oxide',
       })
 
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
@@ -802,66 +790,66 @@ require('lazy').setup({
         --
         -- No, but seriously. Please read `:help ins-completion`, it is really good!
 
---CONFLICT        mapping = cmp.mapping.preset.insert {
-          -- Select the [n]ext item
---          ['<C-n>'] = cmp.mapping.select_next_item(),
-          -- Select the [p]revious item
---          ['<C-p>'] = cmp.mapping.select_prev_item(),
+        --CONFLICT        mapping = cmp.mapping.preset.insert {
+        -- Select the [n]ext item
+        --          ['<C-n>'] = cmp.mapping.select_next_item(),
+        -- Select the [p]revious item
+        --          ['<C-p>'] = cmp.mapping.select_prev_item(),
 
-          -- Scroll the documentation window [b]ack / [f]orward
---          ['<C-b>'] = cmp.mapping.scroll_docs(-4),
---          ['<C-f>'] = cmp.mapping.scroll_docs(4),
+        -- Scroll the documentation window [b]ack / [f]orward
+        --          ['<C-b>'] = cmp.mapping.scroll_docs(-4),
+        --          ['<C-f>'] = cmp.mapping.scroll_docs(4),
 
-          -- Accept ([y]es) the completion.
-          --  This will auto-import if your LSP supports it.
-          --  This will expand snippets if the LSP sent a snippet.
---          ['<C-y>'] = cmp.mapping.confirm { select = true },
+        -- Accept ([y]es) the completion.
+        --  This will auto-import if your LSP supports it.
+        --  This will expand snippets if the LSP sent a snippet.
+        --          ['<C-y>'] = cmp.mapping.confirm { select = true },
 
-          -- If you prefer more traditional completion keymaps,
-          -- you can uncomment the following lines
---          ['<CR>'] = cmp.mapping.confirm { select = true },
---          ['<Tab>'] = cmp.mapping.select_next_item(),
---          ['<S-Tab>'] = cmp.mapping.select_prev_item(),
+        -- If you prefer more traditional completion keymaps,
+        -- you can uncomment the following lines
+        --          ['<CR>'] = cmp.mapping.confirm { select = true },
+        --          ['<Tab>'] = cmp.mapping.select_next_item(),
+        --          ['<S-Tab>'] = cmp.mapping.select_prev_item(),
 
-          -- Manually trigger a completion from nvim-cmp.
-          --  Generally you don't need this, because nvim-cmp will display
-          --  completions whenever it has completion options available.
---          ['<C-Space>'] = cmp.mapping.complete {},
+        -- Manually trigger a completion from nvim-cmp.
+        --  Generally you don't need this, because nvim-cmp will display
+        --  completions whenever it has completion options available.
+        --          ['<C-Space>'] = cmp.mapping.complete {},
 
-          -- Think of <c-l> as moving to the right of your snippet expansion.
-          --  So if you have a snippet that's like:
-          --  function $name($args)
-          --    $body
-          --  end
-          --
-          -- <c-l> will move you to the right of each of the expansion locations.
-          -- <c-h> is similar, except moving you backwards.
---          ['<C-l>'] = cmp.mapping(function()
---            if luasnip.expand_or_locally_jumpable() then
---              luasnip.expand_or_jump()
---            end
---          end, { 'i', 's' }),
---          ['<C-h>'] = cmp.mapping(function()
---            if luasnip.locally_jumpable(-1) then
---              luasnip.jump(-1)
---            end
---          end, { 'i', 's' }),
+        -- Think of <c-l> as moving to the right of your snippet expansion.
+        --  So if you have a snippet that's like:
+        --  function $name($args)
+        --    $body
+        --  end
+        --
+        -- <c-l> will move you to the right of each of the expansion locations.
+        -- <c-h> is similar, except moving you backwards.
+        --          ['<C-l>'] = cmp.mapping(function()
+        --            if luasnip.expand_or_locally_jumpable() then
+        --              luasnip.expand_or_jump()
+        --            end
+        --          end, { 'i', 's' }),
+        --          ['<C-h>'] = cmp.mapping(function()
+        --            if luasnip.locally_jumpable(-1) then
+        --              luasnip.jump(-1)
+        --            end
+        --          end, { 'i', 's' }),
 
-          -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
-          --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
---        },
---        sources = {
---          {
---            name = 'lazydev',
-            -- set group index to 0 to skip loading LuaLS completions as lazydev recommends it
---            group_index = 0,
---          },
---          { name = 'nvim_lsp' },
---          { name = 'luasnip' },
---          { name = 'path' },
---        },
---      }
---    end,
+        -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
+        --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
+        --        },
+        --        sources = {
+        --          {
+        --            name = 'lazydev',
+        -- set group index to 0 to skip loading LuaLS completions as lazydev recommends it
+        --            group_index = 0,
+        --          },
+        --          { name = 'nvim_lsp' },
+        --          { name = 'luasnip' },
+        --          { name = 'path' },
+        --        },
+        --      }
+        --    end,
         --
         -- All presets have the following mappings:
         -- <tab>/<s-tab>: move to right/left of your snippet expansion
@@ -918,13 +906,6 @@ require('lazy').setup({
     'olimorris/onedarkpro.nvim',
     priority = 1000, -- Make sure to load this before all the other start plugins.
     config = function()
-      ---@diagnostic disable-next-line: missing-fields
-      require('tokyonight').setup {
-        styles = {
-          comments = { italic = false }, -- Disable italics in comments
-        },
-      }
-
       -- Load the colorscheme here.
       -- Like many other themes, this one has different styles, and you could load
       -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
@@ -932,7 +913,6 @@ require('lazy').setup({
 
       -- You can configure highlights by doing something like:
       vim.cmd.hi 'Comment gui=none'
-
     end,
   },
 
@@ -1003,14 +983,50 @@ require('lazy').setup({
 
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
-    config = function()
-      local filetypes = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc', 'python', 'rust', 'toml', 'json' }
-      require('nvim-treesitter').install(filetypes)
-      vim.api.nvim_create_autocmd('FileType', {
-        pattern = filetypes,
-        callback = function() vim.treesitter.start() end,
-      })
-    end,
+    build = ':TSUpdate',
+    main = 'nvim-treesitter.configs', -- Sets main module to use for opts
+    -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
+    opts = {
+      ensure_installed = {
+        'bash',
+        -- 'c',
+        'diff',
+        'html',
+        'lua',
+        'luadoc',
+        'markdown',
+        'markdown_inline',
+        -- 'query',
+        'vim',
+        'vimdoc',
+        'python',
+        'rust',
+        'json',
+        'toml',
+      },
+      -- Autoinstall languages that are not installed
+      auto_install = true,
+      highlight = {
+        enable = true,
+        -- Some languages depend on vim's regex highlighting system (such as Ruby) for indent rules.
+        --  If you are experiencing weird indenting issues, add the language to
+        --  the list of additional_vim_regex_highlighting and disabled languages for indent.
+        additional_vim_regex_highlighting = { 'ruby' },
+      },
+      indent = { enable = true, disable = { 'ruby' } },
+      -- https://rsdlt.github.io/posts/rust-nvim-ide-guide-walkthrough-development-debug/#4-install-tree-sitter-and-set-it-up-with-the-tree-sitter-rust-parser
+      rainbow = {
+        enable = true,
+        extended_mode = true,
+        max_file_lines = nil,
+      },
+    },
+    -- There are additional nvim-treesitter modules that you can use to interact
+    -- with nvim-treesitter. You should go explore a few and see what interests you:
+    --
+    --    - Incremental selection: Included, see `:help nvim-treesitter-incremental-selection-mod`
+    --    - Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
+    --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
   },
 
   -- The following comments only work if you have downloaded the kickstart repo, not just copy pasted the
